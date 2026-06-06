@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask import render_template
+from flask_login import login_user
 
 myDB = SQLAlchemy()
 
@@ -46,9 +47,19 @@ def create_app():
             "registration.html",
             form=form
         )
+    
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        from app.login import LoginForm
+        form = LoginForm()
+        return render_template(
+            "login.html",
+            form=form
+        )
     return app
 
 @login_manager.user_loader
 def login_user(user_id):
     from app.models import User
     return User.query.get(int(user_id))
+
