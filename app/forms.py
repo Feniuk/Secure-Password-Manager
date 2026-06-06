@@ -32,4 +32,4 @@ class RegistrationForm(FlaskForm):
             EqualTo("password")
         ]
     )
-    submit = SubmitField("Register")
+    submit = SubmitField("Submit")

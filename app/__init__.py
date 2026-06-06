@@ -17,12 +17,31 @@ def create_app():
 
     @app.route("/")
     def landing_page():
-        return "Secure Password Manager"
+        return "My Secure Password Manager"
+
 
     from app.forms import RegistrationForm
     @app.route("/register", methods=["GET", "POST"])
     def register_user():
         form = RegistrationForm()
+
+        if form.validate_on_submit():
+            from app.models import User
+            from app.security import secure_password
+
+            hashed_password = secure_password(
+                form.password.data
+            )
+            new_user = User(
+                username=form.username.data,
+                email=form.email.data,
+                password_hash=hashed_password
+            )
+            
+            myDB.session.add(new_user)
+            myDB.session.commit()
+            return "User successfully registered!"
+        
         return render_template(
             "registration.html",
             form=form
