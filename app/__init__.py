@@ -3,10 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask import render_template
 from flask_login import login_user
+from flask_login import logout_user
 
 myDB = SQLAlchemy()
 
 login_manager = LoginManager()
+login_manager.login_view = "login"
 
 def create_app():
     app = Flask(__name__)
@@ -51,15 +53,46 @@ def create_app():
     @app.route("/login", methods=["GET", "POST"])
     def login():
         from app.login import LoginForm
+        from app.models import User
+        from app.security import verify_password
+        from flask_login import login_user
+
         form = LoginForm()
+        if form.validate_on_submit():
+            user = User.query.filter_by(
+                username=form.username.data
+            ).first()
+            if user and verify_password(
+                form.password.data,
+                user.password_hash
+            ):
+                login_user(user)
+                return "Login successful!"
+            
+            return "Wrong username or password"
         return render_template(
             "login.html",
             form=form
         )
+    
+    from flask_login import login_required
+    from flask_login import current_user
+    @app.route("/dashboard")
+    @login_required
+    def remember_user():
+        return f"Welcome my dear {current_user.username}!"
+        
+
+    @app.route("/logout")
+    @login_required
+    def logout():
+        logout_user()
+        return "Bye bye, hope to see you again!"
+    
     return app
 
 @login_manager.user_loader
-def login_user(user_id):
+def get_user(user_id):
     from app.models import User
     return User.query.get(int(user_id))
 
