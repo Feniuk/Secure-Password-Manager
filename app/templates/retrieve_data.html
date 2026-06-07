@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Storage Data</title>
+  </head>
+  <body>
+    <h1>Your previously saved data</h1>
+
+    {% for entry in entries %}
+    <hr />
+    <p>Website: {{ entry.website }}</p>
+    <p>Username: {{ entry.username }}</p>
+    <p>Password: {{ entry.password }}</p>
+    {% endfor %}
+  </body>
+</html>

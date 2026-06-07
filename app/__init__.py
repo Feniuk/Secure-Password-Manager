@@ -120,6 +120,34 @@ def create_app():
             "data_to_store.html",
             form=form
         )
+    
+    @app.route("/retrieve_data")
+    @login_required
+    def retrieve():
+        from app.models import DataVault
+        from app.encryption import decryption
+
+        data = DataVault.query.filter_by(
+            user_id=current_user.id
+        ).all()
+        decrypted_entries = []
+
+        for entry in data:
+            decrypted_entries.append(
+                {
+                    "website": entry.website,
+                    "username": decryption(
+                        entry.account_username
+                    ),
+                    "password": decryption(
+                        entry.encrypted_password
+                    )
+                }
+            )
+        return render_template(
+            "retrieve_data.html",
+            entries=decrypted_entries
+        )
 
     return app
 
