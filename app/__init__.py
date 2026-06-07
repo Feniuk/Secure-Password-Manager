@@ -4,6 +4,8 @@ from flask_login import LoginManager
 from flask import render_template
 from flask_login import login_user
 from flask_login import logout_user
+from flask import redirect
+from flask import url_for
 
 myDB = SQLAlchemy()
 
@@ -96,6 +98,7 @@ def create_app():
         from app.password_storage_form import StorageForm
         from app.models import DataVault
         from app.encryption import encryption
+        from flask import flash
 
         form = StorageForm()
 
@@ -115,7 +118,9 @@ def create_app():
 
             myDB.session.add(entered_data)
             myDB.session.commit()
-            return "Data was encrypted and saved."
+            
+            flash("Data was encrypted and saved.")
+            return redirect(url_for("store_data"))
         return render_template(
             "data_to_store.html",
             form=form
@@ -135,6 +140,7 @@ def create_app():
         for entry in data:
             decrypted_entries.append(
                 {
+                    "id": entry.id,
                     "website": entry.website,
                     "username": decryption(
                         entry.account_username
@@ -148,6 +154,22 @@ def create_app():
             "retrieve_data.html",
             entries=decrypted_entries
         )
+    
+    @app.route("/delete/<int:entry_id>")
+    @login_required
+    def delete_data(entry_id):
+        from app.models import DataVault
+        from flask import flash
+        data = DataVault.query.get_or_404(
+            entry_id
+        )
+        if data.user_id != current_user.id:
+            return "You have no access to delete this data", 403
+        myDB.session.delete(data)
+        myDB.session.commit()
+        flash("Your data was deleted")
+        return redirect(url_for("store_data"))
+        
 
     return app
 

@@ -3,7 +3,31 @@
   <head>
     <title>Add Data</title>
   </head>
+  <script>
+    setTimeout(function () {
+      let message = document.getElementById("flash-message");
+      if (message) {
+        message.style.display = "none";
+      }
+    }, 2000);
+  </script>
   <body>
+    {% with messages = get_flashed_messages() %} {% if messages %} {% for
+    message in messages %}
+    <div
+      id="flash-message"
+      style="
+        background-color: #f60a0a;
+        color: #fff;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      "
+    >
+      {{ message }}
+    </div>
+    {% endfor %} {% endif %} {% endwith %}
+
     <h1>Add Data which you would like to store</h1>
 
     <form method="POST">

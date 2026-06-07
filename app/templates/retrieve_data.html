@@ -11,6 +11,9 @@
     <p>Website: {{ entry.website }}</p>
     <p>Username: {{ entry.username }}</p>
     <p>Password: {{ entry.password }}</p>
+    <p>
+      <a href="/delete/{{ entry.id }}"> Delete </a>
+    </p>
     {% endfor %}
   </body>
 </html>
