@@ -23,3 +23,30 @@ class User(UserMixin, myDB.Model):
 
     def __repr__(self):
         return f"<User {self.username}>"
+    
+
+
+class DataVault(myDB.Model):
+    website = myDB.Column(
+        myDB.String(200),
+        nullable=False
+    )
+    id = myDB.Column(
+        myDB.Integer,
+        primary_key=True
+    )
+    account_username = myDB.Column(
+        myDB.String(100),
+        nullable=False
+    )
+    encrypted_password = myDB.Column(
+        myDB.Text,
+        nullable=False
+    )
+    user_id = myDB.Column(
+        myDB.Integer,
+        myDB.ForeignKey("user.id"),
+        nullable=False
+    )
+    def __repr__(self):
+        return f"<DataVault {self.website}>"

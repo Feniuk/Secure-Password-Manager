@@ -23,7 +23,7 @@ def create_app():
         return "My Secure Password Manager"
 
 
-    from app.forms import RegistrationForm
+    from app.registration_form import RegistrationForm
     @app.route("/register", methods=["GET", "POST"])
     def register_user():
         form = RegistrationForm()
@@ -52,7 +52,7 @@ def create_app():
     
     @app.route("/login", methods=["GET", "POST"])
     def login():
-        from app.login import LoginForm
+        from app.login_form import LoginForm
         from app.models import User
         from app.security import verify_password
         from flask_login import login_user
@@ -88,8 +88,41 @@ def create_app():
     def logout():
         logout_user()
         return "Bye bye, hope to see you again!"
-    
+
+
+    @app.route("/store_data", methods=["GET", "POST"])
+    @login_required
+    def store_data():
+        from app.password_storage_form import StorageForm
+        from app.models import DataVault
+        from app.encryption import encryption
+
+        form = StorageForm()
+
+        if form.validate_on_submit():
+            encrypted_username = encryption(
+                form.username.data
+            )
+            encrypted_password = encryption(
+                form.password.data
+            )
+            entered_data = DataVault(
+                website=form.website.data,
+                account_username=encrypted_username,
+                encrypted_password=encrypted_password,
+                user_id=current_user.id
+            )
+
+            myDB.session.add(entered_data)
+            myDB.session.commit()
+            return "Data was encrypted and saved."
+        return render_template(
+            "data_to_store.html",
+            form=form
+        )
+
     return app
+
 
 @login_manager.user_loader
 def get_user(user_id):

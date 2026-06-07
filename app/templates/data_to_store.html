@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Add Data</title>
+  </head>
+  <body>
+    <h1>Add Data which you would like to store</h1>
+
+    <form method="POST">
+      {{ form.hidden_tag() }}
+      <p>{{ form.website.label }} {{ form.website() }}</p>
+      <p>{{ form.username.label }} {{ form.username() }}</p>
+      <p>{{ form.password.label }} {{ form.password() }}</p>
+      <p>{{ form.submit() }}</p>
+    </form>
+  </body>
+</html>
