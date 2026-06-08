@@ -41,6 +41,16 @@
       </div>
       {% endfor %} {% endif %} {% endwith %}
 
+      <script>
+        setTimeout(function () {
+          let message = document.getElementById("flash-message");
+
+          if (message) {
+            message.style.display = "none";
+          }
+        }, 3000);
+      </script>
+
       <div class="card p-4 shadow">
         <h1 class="mb-4">Add Data which you would like to store</h1>
 

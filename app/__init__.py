@@ -33,6 +33,13 @@ def create_app():
         if form.validate_on_submit():
             from app.models import User
             from app.security import secure_password
+            from app.password_strenght_check import password_strength_check
+            from flask import flash
+
+            strenght = password_strength_check(form.password.data)
+            if strenght == "Weak":
+                flash("Password is too weak")
+                return render_template("registration.html",form=form)
 
             hashed_password = secure_password(
                 form.password.data
@@ -70,7 +77,7 @@ def create_app():
             ):
                 login_user(user)
                 return redirect(
-                    url_for("dashboard")
+                    url_for("remember_user")
                 )
             
             return "Wrong username or password"
@@ -90,8 +97,10 @@ def create_app():
     @app.route("/logout")
     @login_required
     def logout():
+        from flask import flash
         logout_user()
-        return "Bye bye, hope to see you again!"
+        flash("Bye bye, hope to see you again!")
+        return redirect(url_for("landing_page"))
 
 
     @app.route("/store_data", methods=["GET", "POST"])
