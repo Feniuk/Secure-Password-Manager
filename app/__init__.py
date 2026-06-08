@@ -22,7 +22,7 @@ def create_app():
 
     @app.route("/")
     def landing_page():
-        return "My Secure Password Manager"
+        return render_template("home.html")
 
 
     from app.registration_form import RegistrationForm
@@ -69,7 +69,9 @@ def create_app():
                 user.password_hash
             ):
                 login_user(user)
-                return "Login successful!"
+                return redirect(
+                    url_for("dashboard")
+                )
             
             return "Wrong username or password"
         return render_template(
@@ -82,7 +84,7 @@ def create_app():
     @app.route("/dashboard")
     @login_required
     def remember_user():
-        return f"Welcome my dear {current_user.username}!"
+        return render_template("dashboard.html")
         
 
     @app.route("/logout")
@@ -170,7 +172,6 @@ def create_app():
         flash("Your data was deleted")
         return redirect(url_for("store_data"))
         
-
     return app
 
 
