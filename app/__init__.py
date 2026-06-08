@@ -171,6 +171,62 @@ def create_app():
         myDB.session.commit()
         flash("Your data was deleted")
         return redirect(url_for("store_data"))
+    
+
+    @app.route("/edit/<int:entry_id>", methods=["GET", "POST"])
+    @login_required
+    def edit_data(entry_id):
+        from app.edit import EditForm
+        from app.models import DataVault
+        from app.encryption import decryption
+        from app.encryption import encryption
+
+        entry = DataVault.query.get_or_404(
+            entry_id
+        )
+
+        if entry.user_id != current_user.id:
+            return "You have no access to edit this data", 403
+        
+        form = EditForm()
+
+        if form.validate_on_submit():
+            entry.website = form.website.data
+            entry.account_username = encryption(
+                form.username.data
+            )
+            entry.encrypted_password = encryption(
+                form.password.data
+            )
+
+            myDB.session.commit()
+            return redirect(
+                url_for("retrieve")
+            )
+
+        if not form.is_submitted():
+            form.website.data = entry.website
+            form.username.data = decryption(
+                entry.account_username
+            )
+            form.password.data = decryption(
+                entry.encrypted_password
+            )
+        return render_template(
+            "edit.html",
+            form=form
+        )
+    
+
+    @app.route("/generate_password")
+    @login_required
+    def pass_gen():
+        from app.password_generator import generate_password
+        password = generate_password()
+        return render_template(
+            "generate_password.html",
+            password=password
+        )
         
     return app
 
