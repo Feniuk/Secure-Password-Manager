@@ -52,7 +52,8 @@ def create_app():
             
             myDB.session.add(new_user)
             myDB.session.commit()
-            return "User successfully registered!"
+            flash("User successfully registered!")
+            return redirect(url_for("login"))
         
         return render_template(
             "registration.html",
