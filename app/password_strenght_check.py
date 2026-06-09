@@ -9,7 +9,7 @@ def password_strength_check(password):
     if any(char.isdigit() for char in password):
         score += 1
     if any(
-        char in "!@#$%^&*()-_=+"
+        char in "!?@#$%^&*()-_=+"
         for char in password
     ):
         score += 1
