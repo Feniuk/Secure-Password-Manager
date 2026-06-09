@@ -48,7 +48,8 @@ Technologies used:
 
 How to start the project:
 At first install all dependencies from requirements.txt file:
-pip install -r requirements.txt
+
+- pip install -r requirements.txt
 
 Start the app:
 
